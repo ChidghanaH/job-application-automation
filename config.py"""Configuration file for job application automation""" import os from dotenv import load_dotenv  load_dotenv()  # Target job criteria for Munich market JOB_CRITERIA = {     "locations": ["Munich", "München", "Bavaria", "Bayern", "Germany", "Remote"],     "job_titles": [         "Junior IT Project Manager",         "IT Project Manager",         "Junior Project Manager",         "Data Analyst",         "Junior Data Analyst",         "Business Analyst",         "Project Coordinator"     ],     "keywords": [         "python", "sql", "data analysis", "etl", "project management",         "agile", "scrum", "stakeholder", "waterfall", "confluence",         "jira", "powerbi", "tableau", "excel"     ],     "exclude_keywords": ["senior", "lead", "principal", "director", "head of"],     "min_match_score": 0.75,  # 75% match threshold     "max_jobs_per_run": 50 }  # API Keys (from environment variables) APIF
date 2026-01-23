@@ -54,3 +54,50 @@ EMAIL_KEYWORDS = {
     "offer": ["offer", "angebot", "congratulations", "glückwunsch"],
     "assessment": ["assessment", "test", "challenge", "assignment", "aufgabe"]
 }
+
+
+# Country-Specific Resume Formatting
+COUNTRY_RESUME_FORMATS = {
+    "germany": {
+        "max_pages": 2,
+        "include_photo": True,  # German CVs typically include professional photo
+        "include_date_of_birth": True,
+        "include_marital_status": False,  # Optional, modern practice avoids this
+        "date_format": "DD.MM.YYYY",
+        "paper_size": "A4",
+        "sections_order": ["personal_info", "photo", "professional_summary", "work_experience", "education", "skills", "languages", "certifications"],
+        "language": "de",  # Can auto-translate or use bilingual
+        "title_style": "Lebenslauf",
+        "address_format": "full",  # Include full address
+        "references": "auf Anfrage"  # "Available upon request" in German
+    },
+    "usa": {
+        "max_pages": 1,
+        "include_photo": False,  # US law discourages photos to prevent discrimination
+        "include_date_of_birth": False,
+        "include_marital_status": False,
+        "date_format": "MM/DD/YYYY",
+        "paper_size": "Letter",
+        "sections_order": ["professional_summary", "work_experience", "education", "skills", "certifications"],
+        "language": "en",
+        "title_style": "Resume",
+        "address_format": "city_state",  # City, State only
+        "references": "Available upon request"
+    },
+    "uk": {
+        "max_pages": 2,
+        "include_photo": False,
+        "include_date_of_birth": False,
+        "include_marital_status": False,
+        "date_format": "DD/MM/YYYY",
+        "paper_size": "A4",
+        "sections_order": ["personal_statement", "work_experience", "education", "skills", "interests"],
+        "language": "en",
+        "title_style": "Curriculum Vitae",
+        "address_format": "full",
+        "references": "References available on request"
+    }
+}
+
+# Default country preference (auto-detected from job location or set manually)
+DEFAULT_COUNTRY = os.getenv("RESUME_COUNTRY", "germany")  # For Munich jobs
