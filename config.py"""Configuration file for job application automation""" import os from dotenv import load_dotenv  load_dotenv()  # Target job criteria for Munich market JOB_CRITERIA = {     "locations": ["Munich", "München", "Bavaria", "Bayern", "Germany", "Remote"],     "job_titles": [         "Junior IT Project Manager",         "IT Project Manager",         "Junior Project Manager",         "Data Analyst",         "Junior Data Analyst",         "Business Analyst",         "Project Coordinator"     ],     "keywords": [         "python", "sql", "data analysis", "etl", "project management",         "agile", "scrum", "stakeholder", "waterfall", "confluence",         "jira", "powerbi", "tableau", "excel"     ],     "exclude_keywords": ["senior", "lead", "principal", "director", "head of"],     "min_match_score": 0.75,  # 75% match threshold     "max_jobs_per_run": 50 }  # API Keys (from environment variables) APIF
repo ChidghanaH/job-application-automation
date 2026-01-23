@@ -1,0 +1,28 @@
+"""Configuration file for job application automation"""
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Target job criteria for Munich market
+JOB_CRITERIA = {
+    "locations": ["Munich", "München", "Bavaria", "Bayern", "Germany", "Remote"],
+    "job_titles": [
+        "Junior IT Project Manager", "IT Project Manager", "Junior Project Manager",
+        "Data Analyst", "Junior Data Analyst", "Business Analyst", "Project Coordinator"
+    ],
+    "keywords": [
+        "python", "sql", "data analysis", "etl", "project management",
+        "agile", "scrum", "stakeholder", "waterfall", "confluence",
+        "jira", "powerbi", "tableau", "excel"
+    ],
+    "exclude_keywords": ["senior", "lead", "principal", "director", "head of"],
+    "min_match_score": 0.75,
+    "max_jobs_per_run": 50
+}
+
+# API Keys
+APIFY_API_KEY = os.getenv("APIFY_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+GOOGLE_SHEETS_CREDS = os.getenv("GOOGLE_SHEETS_CREDENTIALS")
+SHEET_ID = os.getenv("SHEET_ID")
