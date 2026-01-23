@@ -26,3 +26,31 @@ APIFY_API_KEY = os.getenv("APIFY_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GOOGLE_SHEETS_CREDS = os.getenv("GOOGLE_SHEETS_CREDENTIALS")
 SHEET_ID = os.getenv("SHEET_ID")
+
+# Resume Configuration
+RESUME_SOURCE = os.getenv("RESUME_SOURCE", "pdf")  # "pdf" or "flowcv"
+RESUME_PDF_PATH = os.getenv("RESUME_PDF_PATH", "data/base_resume.pdf")
+FLOWCV_RESUME_ID = os.getenv("FLOWCV_RESUME_ID")
+FLOWCV_API_KEY = os.getenv("FLOWCV_API_KEY")
+
+# Email Integration (Gmail API)
+GMAIL_CREDENTIALS = os.getenv("GMAIL_CREDENTIALS")
+GMAIL_TOKEN = os.getenv("GMAIL_TOKEN")
+MONITOR_EMAIL = os.getenv("MONITOR_EMAIL")  # Your job search email
+
+# Application Automation Settings
+APPLICATION_SETTINGS = {
+    "auto_apply_company_website": True,  # Try to apply on company careers page
+    "skip_if_captcha": True,  # Skip and send link if CAPTCHA detected
+    "max_apply_attempts": 3,
+    "notify_captcha_via_email": True,
+    "captcha_notification_email": os.getenv("NOTIFICATION_EMAIL")
+}
+
+# Email Monitoring Keywords
+EMAIL_KEYWORDS = {
+    "interview": ["interview", "gespräch", "meeting", "call", "video interview"],
+    "rejection": ["unfortunately", "bedauern", "not selected", "another candidate"],
+    "offer": ["offer", "angebot", "congratulations", "glückwunsch"],
+    "assessment": ["assessment", "test", "challenge", "assignment", "aufgabe"]
+}
