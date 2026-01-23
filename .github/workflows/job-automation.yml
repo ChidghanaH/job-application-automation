@@ -1,0 +1,52 @@
+name: Job Search Automation
+
+on:
+  schedule:
+    - cron: '0 7 * * *'  # Daily at 7 AM CET
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  run-job-search:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Fetch jobs from APIs
+        env:
+          APIFY_API_KEY: ${{ secrets.APIFY_API_KEY }}
+          LINKEDIN_EMAIL: ${{ secrets.LINKEDIN_EMAIL }}
+        run: python scripts/fetch_jobs.py
+
+      - name: Rank and filter jobs
+        run: python scripts/rank_jobs.py
+
+      - name: Generate tailored documents
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/generate_docs.py
+
+      - name: Update tracking sheet
+        env:
+          GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+        run: python scripts/update_sheet.py
+
+      - name: Upload generated resumes
+        uses: actions/upload-artifact@v4
+        with:
+          name: tailored-resumes-${{ github.run_number }}
+          path: output/resumes/
+          retention-days: 30
