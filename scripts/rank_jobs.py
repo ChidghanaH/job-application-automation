@@ -3,8 +3,13 @@ import json
 import os
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from config import JOB_CRITERIA
-
+# Job criteria from config
+JOB_CRITERIA = {
+    "keywords": ["python", "sql", "data analysis", "etl", "project management", "agile", "scrum", "stakeholder", "waterfall", "confluence", "jira", "powerbi", "tableau", "excel"],
+    "exclude_keywords": ["senior", "lead", "principal", "director", "head of"],
+    "min_match_score": 0.75,
+    "max_jobs_per_run": 20
+}
 def calculate_match_score(job):
     """Calculate 0-1 match score based on keywords"""
     text = (job.get("description", "") + " " + job.get("title", "")).lower()
