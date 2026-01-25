@@ -7,8 +7,13 @@ from googleapiclient.discovery import build
 import base64
 import re
 from datetime import datetime
-from config import EMAIL_KEYWORDS
-from update_sheet import update_status_from_email
+# Email keywords for classification
+EMAIL_KEYWORDS = {
+    "interview": ["interview", "phone screen", "call you", "speak with you", "meeting", "zoom", "teams"],
+    "rejection": ["unfortunately", "not moving forward", "decided to", "other candidates", "not selected"],
+    "offer": ["offer", "congratulations", "pleased to offer", "job offer"],
+    "received": ["received your application", "thank you for applying", "application received"]
+}from update_sheet import update_status_from_email
 
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
