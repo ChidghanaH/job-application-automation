@@ -112,11 +112,8 @@ def process_jobs():
         return
     
     # Get resume
-    resume_path = os.getenv("RESUME_PDF_PATH")
-    if resume_path and os.path.exists(resume_path):
+    resume_path = "Chidghana-Hemantharaju.pdf"  # Use the uploaded resume file    if resume_path and os.path.exists(resume_path):
         resume_text = extract_text_from_pdf(resume_path)
-    else:
-        resume_text = get_flowcv_resume()
     
     if not resume_text:
         print("❌ Error: No resume found")
