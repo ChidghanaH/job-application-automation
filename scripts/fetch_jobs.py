@@ -3,9 +3,9 @@ import os
 import json
 from apify_client import ApifyClient
 import sys
+APIFY_API_KEY = os.getenv("APIFY_API_TOKEN")
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-from config import APIFY_API_KEY, JOB_CRITERIA
-
+from config import JOB_CRITERIA
 def fetch_linkedin_jobs():
     """Fetch jobs from LinkedIn via Apify"""
     print("🔍 Connecting to Apify...")
