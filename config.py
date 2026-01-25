@@ -23,7 +23,7 @@ JOB_CRITERIA = {
     ],
     "exclude_keywords": ["senior", "lead", "principal", "director", "head of"],
     "min_match_score": 0.75,  # 75% match threshold
-    "max_jobs_per_run": 50
+    "max_jobs_per_run": 20
 }
 
 # API Keys (from environment variables)
