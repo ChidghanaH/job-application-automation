@@ -112,12 +112,8 @@ def process_jobs():
         return
     
     # Get resume
-    resume_path = "Chidghana-Hemantharaju.pdf"  # Use the uploaded resume file    if resume_path and os.path.exists(resume_path):
-        resume_text = extract_text_from_pdf(resume_path)
-    
-    if not resume_text:
-        print("❌ Error: No resume found")
-        return
+    resume_path = "Chidghana-Hemantharaju.pdf"  # Use the uploaded resume file        resume_text = extract_text_from_pdf(resume_path)
+    resume_text = extract_text_from_pdf(resume_path)    if not resume_text:
     
     print(f"📄 Processing {len(jobs[:10])} top jobs...")
     
