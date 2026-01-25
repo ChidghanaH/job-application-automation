@@ -3,8 +3,18 @@ import json
 from openai import OpenAI
 import PyPDF2
 import requests
-from config import OPENAI_API_KEY, FLOWCV_API_KEY, RESUME_FORMATS
 
+# Get API keys from environment
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+FLOWCV_API_KEY = os.getenv("FLOWCV_API_KEY")
+
+# Resume formats
+RESUME_FORMATS = {
+    "US": "1-page resume, no photo, concise bullet points",
+    "DE": "Lebenslauf format with professional photo, detailed work history",
+    "UK": "2-page CV, no photo, detailed achievements"
+}
+import os
 def extract_text_from_pdf(pdf_path):
     """Extract text from PDF resume"""
     with open(pdf_path, 'rb') as file:
