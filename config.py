@@ -43,3 +43,47 @@ APP_CONFIG = {
     "generate_cover_letter": True,
     "track_applications": True
 }
+
+# Target companies for direct career page scraping
+COMPANY_CAREERS = [
+    {
+        "name": "BMW Group",
+        "url": "https://www.bmwgroup.jobs/de/de/jobfinder.html?location=Munich",
+        "keywords": ["Project Manager", "Data Analyst", "Business Analyst"]
+    },
+    {
+        "name": "Siemens",
+        "url": "https://jobs.siemens.com/careers?location=Munich",
+        "keywords": ["IT Project Manager", "Data Analyst", "Project Coordinator"]
+    },
+    {
+        "name": "Allianz",
+        "url": "https://careers.allianz.com/en_EN/jobs.html?location=Munich",
+        "keywords": ["Project Manager", "Data Analyst", "Business Intelligence"]
+    },
+    {
+        "name": "Munich Re",
+        "url": "https://www.munichre.com/en/careers/jobs.html?location=Munich",
+        "keywords": ["Data Analyst", "Project Manager", "Analytics"]
+    },
+    {
+        "name": "Infineon Technologies",
+        "url": "https://www.infineon.com/cms/en/careers/jobsearch/?location=Munich",
+        "keywords": ["Project Manager", "Data Analyst", "IT Manager"]
+    },
+    {
+        "name": "Celonis",
+        "url": "https://www.celonis.com/careers/jobs/?location=Munich",
+        "keywords": ["Project Manager", "Data Analyst", "Process Mining"]
+    },
+    {
+        "name": "SAP",
+        "url": "https://jobs.sap.com/search/?location=Munich",
+        "keywords": ["Project Manager", "Data Analyst", "Consultant"]
+    },
+    {
+        "name": "Microsoft",
+        "url": "https://careers.microsoft.com/professionals/us/en/search-results?location=Munich",
+        "keywords": ["Project Manager", "Data Analyst", "Program Manager"]
+    }
+]
