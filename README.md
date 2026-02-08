@@ -1,57 +1,67 @@
-# 🤖 Job Application Automation Workflow
+# Job Application Automation Workflow
 
-Automated job search & application workflow for **Munich-based Junior PM & Data Analyst roles**. Fetches jobs from APIs, generates tailored resumes/cover letters via AI, and tracks applications in Google Sheets. Runs daily via GitHub Actions.
+This is an automated job search and application workflow I built to help with my job hunt in Munich. It's designed specifically for Junior PM and Data Analyst roles. The system fetches jobs from various sources, generates tailored resumes and cover letters using AI, and tracks everything in Google Sheets. It runs automatically every day via GitHub Actions.
 
-## ✨ Features
+## What It Does
 
-- **🔍 Automated Job Scraping**: Uses Apify actors to scrape LinkedIn, Indeed, StepStone for Munich IT jobs
-- **🎯 Smart Filtering**: Ranks jobs by match score (keywords, location, role type)
-- **✍️ AI Resume Tailoring**: Generates custom resume & cover letter per job using OpenAI GPT-4
-- **📊 Application Tracking**: Auto-updates Google Sheets with job details, match scores, and links
-- **⏰ Daily Automation**: GitHub Actions runs every morning at 7 AM CET
-- **📦 Artifact Storage**: Saves generated resumes as downloadable artifacts
+- **Automated Job Scraping**: Searches LinkedIn, Indeed, and StepStone for relevant IT jobs in Munich using Apify
+- **Smart Filtering**: Ranks each job based on how well it matches my skills, preferred location, and role type
+- **AI Resume Tailoring**: Uses OpenAI GPT-4 to customize my resume and cover letter for each specific job
+- **Application Tracking**: Automatically logs job details, match scores, and application links in Google Sheets
+- **Daily Automation**: Runs automatically every morning at 7 AM CET
+- **Resume Storage**: Saves all generated resumes as downloadable artifacts
 
-## 🏗️ Architecture
+## How It Works
+
+The workflow follows this process:
 
 ```
-GitHub Actions (daily 7 AM)
+GitHub Actions (runs daily at 7 AM)
   ↓
-fetch_jobs.py → Apify LinkedIn/Indeed scrapers
+fetch_jobs.py → Scrapes jobs from LinkedIn and Indeed via Apify
   ↓
-rank_jobs.py → Filter by location/keywords/score
+rank_jobs.py → Filters by location, keywords, and calculates match score
   ↓
-generate_docs.py → OpenAI GPT-4 tailors CV/cover letter
+generate_docs.py → Uses OpenAI GPT-4 to tailor my CV and cover letter
   ↓
-update_sheet.py → Google Sheets tracking
+update_sheet.py → Updates Google Sheets with tracking info
   ↓
-Artifacts → Download tailored resumes
+Artifacts → Downloads the tailored resumes
 ```
 
-## 🚀 Setup
+## Getting Started
 
-### 1. Fork & Clone Repository
+### 1. Fork and Clone This Repository
+
 ```bash
 git clone https://github.com/YOUR_USERNAME/job-application-automation.git
 cd job-application-automation
 ```
 
-### 2. Create `.env` File (Local Testing)
+### 2. Set Up Local Environment
+
+Create a `.env` file for local testing:
+
 ```bash
 APIFY_API_KEY=your_apify_key
 OPENAI_API_KEY=your_openai_key
-GOOGLE_SHEETS_CREDENTIALS='{...}'  # Service account JSON
+GOOGLE_SHEETS_CREDENTIALS='{...}' # Your service account JSON
 SHEET_ID=your_google_sheet_id
 ```
 
-### 3. Add GitHub Secrets
-Go to **Settings → Secrets → Actions** and add:
+### 3. Configure GitHub Secrets
+
+Go to your repository's **Settings → Secrets → Actions** and add these secrets:
+
 - `APIFY_API_KEY`
 - `OPENAI_API_KEY`
 - `GOOGLE_SHEETS_CREDENTIALS`
 - `SHEET_ID`
 
-### 4. Edit `config.py`
-Customize job criteria:
+### 4. Customize Job Criteria
+
+Edit `config.py` to match your preferences:
+
 ```python
 JOB_CRITERIA = {
     "locations": ["Munich", "München", "Bavaria"],
@@ -61,39 +71,32 @@ JOB_CRITERIA = {
 }
 ```
 
-## 📝 Implementation Guide
+## Implementation Details
 
-### Create Missing Scripts
+The project uses several Python scripts in the `scripts/` folder:
 
-You need to implement these Python scripts in a `scripts/` folder:
+### scripts/fetch_jobs.py
 
-#### `scripts/fetch_jobs.py`
-- Use Apify's LinkedIn/Indeed actors
-- Query jobs matching Munich + role keywords
-- Save to `data/raw_jobs.json`
+This script connects to Apify's LinkedIn and Indeed scrapers, searches for jobs matching my criteria in Munich, and saves the raw results to `data/raw_jobs.json`.
 
-#### `scripts/rank_jobs.py`
-- Load `data/raw_jobs.json`
-- Calculate match score based on keywords
-- Filter by `min_match_score`
-- Save top 50 to `data/ranked_jobs.json`
+### scripts/rank_jobs.py
 
-#### `scripts/generate_docs.py`
-- Load `data/ranked_jobs.json`
-- For each job, call OpenAI API with:
-  - Base resume template
-  - Job description
-  - Prompt: "Tailor this resume for this role"
-- Save PDFs to `output/resumes/`
+Loads the raw jobs, calculates a match score for each one based on keywords and requirements, filters out anything below my minimum threshold, and saves the top candidates to `data/ranked_jobs.json`.
 
-#### `scripts/update_sheet.py`
-- Load `data/ranked_jobs.json`
-- Use gspread library
-- Append rows: [Date, Company, Role, Location, Match Score, Link, Status]
+### scripts/generate_docs.py
 
-## 🎯 Usage
+Takes the ranked jobs and uses OpenAI's GPT-4 API to generate customized versions of my resume and cover letter for each position. The prompts include both my base resume template and the specific job description. Results are saved as PDFs in `output/resumes/`.
 
-### Manual Run (Local)
+### scripts/update_sheet.py
+
+Connects to Google Sheets using the gspread library and adds new rows for each job with details like date, company, role, location, match score, link, and application status.
+
+## Running the System
+
+### Manual Execution
+
+You can run it manually on your local machine:
+
 ```bash
 pip install -r requirements.txt
 python scripts/fetch_jobs.py
@@ -102,62 +105,76 @@ python scripts/generate_docs.py
 python scripts/update_sheet.py
 ```
 
-### Automated (GitHub Actions)
-- Workflow runs **daily at 7 AM CET**
-- Or trigger manually: **Actions → Job Search Automation → Run workflow**
-- Download resumes from **Artifacts**
+### Automatic Daily Runs
 
-## 📊 Google Sheets Setup
+The GitHub Actions workflow automatically runs every day at 7 AM CET. You can also trigger it manually:
 
-1. Create a Google Sheet with columns:
-   `Date | Company | Role | Location | Match Score | Link | Status | Notes`
-2. Share with service account email from credentials JSON
-3. Copy Sheet ID from URL and add to secrets
+1. Go to the **Actions** tab in your repository
+2. Select **Job Search Automation**
+3. Click **Run workflow**
+4. Download generated resumes from the **Artifacts** section
 
-## ⚠️ Important Notes
+## Setting Up Google Sheets
 
-### Legal & Ethical
-- **Do NOT auto-click "Apply"** - violates LinkedIn/Indeed TOS
-- This tool **finds & prepares** - YOU manually apply
-- Review each tailored resume before submitting
-- Respect rate limits on job boards
+1. Create a new Google Sheet with these columns:
+   - Date | Company | Role | Location | Match Score | Link | Status | Notes
+2. Share the sheet with your service account email (found in your credentials JSON)
+3. Copy the Sheet ID from the URL and add it to your GitHub secrets
 
-### Cost Estimates
-- Apify: ~$5/month for 50 jobs/day
-- OpenAI GPT-4: ~$10/month for resume generation
-- GitHub Actions: Free (within limits)
+## Important Considerations
 
-## 🛠️ Customization
+### Legal and Ethical Usage
 
-### Change Schedule
-Edit `.github/workflows/job-automation.yml`:
+Please note that this tool is designed to assist with job searching, not to spam applications:
+
+- Never use it to automatically click "Apply" buttons - that violates LinkedIn and Indeed terms of service
+- This system finds opportunities and prepares materials - you still need to manually review and apply
+- Always review the tailored resumes before submitting to ensure quality
+- Be respectful of rate limits on job boards
+
+### Cost Considerations
+
+Running this system does have some costs:
+
+- Apify: Approximately $5 per month for scraping 50 jobs daily
+- OpenAI GPT-4: Around $10 per month for resume generation
+- GitHub Actions: Free within GitHub's standard limits
+
+## Customization Options
+
+### Changing the Schedule
+
+Edit `.github/workflows/job-automation.yml` to adjust when it runs:
+
 ```yaml
 schedule:
-  - cron: '0 7 * * *'  # Change time here (UTC)
+  - cron: '0 7 * * *'  # Adjust this time (uses UTC)
 ```
 
-### Add More Job Boards
-Extend `fetch_jobs.py` to scrape StepStone, XING, or use n8n webhooks.
+### Adding More Job Boards
 
-## 📚 Resources
+You can extend `fetch_jobs.py` to include other sources like StepStone or XING, or integrate with n8n webhooks.
 
-- [Apify Actors for Job Scraping](https://apify.com/store)
-- [OpenAI API Docs](https://platform.openai.com/docs)
+## Helpful Resources
+
+- [Apify Job Scraping Actors](https://apify.com/store)
+- [OpenAI API Documentation](https://platform.openai.com/docs)
 - [gspread Python Library](https://docs.gspread.org/)
-- [GitHub Actions Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+- [GitHub Actions Secrets Guide](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
 
-## 🤝 Contributing
+## Contributing
 
-PRs welcome! Focus areas:
-- Additional job board scrapers
-- Better match scoring algorithms
-- Cover letter templates
+If you find this useful and want to contribute, pull requests are welcome! Areas that could use improvement:
+
+- Support for additional job boards
+- Better scoring algorithms
+- Cover letter template variations
 - n8n workflow examples
 
-## 📄 License
+## License
 
-MIT License - Use freely, but please star ⭐ if helpful!
+MIT License - Feel free to use this for your own job search. If it helps you land a job, I'd love to hear about it!
 
 ---
 
-**Made for junior devs/analysts job hunting in Munich** 🇩🇪
+Built by someone who got tired of manually searching job boards every day. I hope it helps you too!
