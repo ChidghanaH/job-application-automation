@@ -16,17 +16,17 @@ from config import JOB_CRITERIA, COMPANY_CAREERS
 # Page config
 st.set_page_config(
     page_title="Job Application Automation",
-    page_icon="🤖",
+    page_icon="💼",
     layout="wide"
 )
 
 # Title
-st.title("🤖 Job Application Automation Dashboard")
+st.title("Job Application Automation Dashboard")
 st.markdown("Personal automation tool for Munich-based PM & Data Analyst job search")
 
 # Sidebar - Settings
 with st.sidebar:
-    st.header("⚙️ Settings")
+    st.header("Settings")
     
     # Job source selection
     mode = st.radio(
@@ -39,11 +39,11 @@ with st.sidebar:
     st.markdown("---")
     
     # Location filters
-    st.subheader("📍 Location")
+    st.subheader("Location")
     location = st.text_input("Primary location", "Munich")
     
     # Match score filter
-    st.subheader("🎯 Match Criteria")
+    st.subheader("Match Criteria")
     min_score = st.slider(
         "Minimum match score", 
         0.0, 1.0, 
@@ -70,7 +70,7 @@ with st.sidebar:
     st.markdown("---")
     
     # Run button
-    run_button = st.button("▶️ Run Search", type="primary", use_container_width=True)
+    run_button = st.button("Run Search", type="primary", use_container_width=True)
 
 # Main content area
 if run_button:
@@ -78,17 +78,17 @@ if run_button:
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("📊 Progress")
+        st.subheader("Progress")
         progress_bar = st.progress(0)
         status_text = st.empty()
     
     with col2:
-        st.subheader("📈 Statistics")
+        st.subheader("Statistics")
         stats_container = st.empty()
     
     try:
         # Step 1: Fetch jobs
-        status_text.info("🔍 Fetching jobs...")
+        status_text.info("Fetching jobs...")
         progress_bar.progress(20)
         
         if mode == "Job Boards (LinkedIn/Indeed)":
@@ -99,31 +99,31 @@ if run_button:
             source = "company_careers"
         
         raw_jobs_count = len(jobs)
-        status_text.success(f"✅ Found {raw_jobs_count} jobs from {source}")
+        status_text.success(f"Found {raw_jobs_count} jobs from {source}")
         
         # Step 2: Rank jobs
-        status_text.info("🎯 Ranking jobs by match score...")
+        status_text.info("Ranking jobs by match score...")
         progress_bar.progress(40)
         
         ranked = rank_jobs(jobs, min_score=min_score, max_jobs=max_jobs)
         ranked_count = len(ranked)
         
-        status_text.success(f"✅ {ranked_count} jobs passed filters")
+        status_text.success(f"{ranked_count} jobs passed filters")
         progress_bar.progress(60)
         
         # Step 3: Generate documents (optional)
         if generate_docs and ranked_count > 0:
-            status_text.info("✍️ Generating tailored resumes...")
+            status_text.info("Generating tailored resumes...")
             docs_generated = generate_documents(ranked)
-            status_text.success(f"✅ Generated {len(docs_generated)} documents")
+            status_text.success(f"Generated {len(docs_generated)} documents")
         
         progress_bar.progress(80)
         
         # Step 4: Update Google Sheets (optional)
         if update_sheets and ranked_count > 0:
-            status_text.info("📊 Updating Google Sheets...")
+            status_text.info("Updating Google Sheets...")
             update_google_sheet(ranked)
-            status_text.success("✅ Google Sheets updated")
+            status_text.success("Google Sheets updated")
         
         progress_bar.progress(100)
         
@@ -138,15 +138,15 @@ if run_button:
                 match_rate = (ranked_count / raw_jobs_count * 100) if raw_jobs_count > 0 else 0
                 st.metric("Match Rate", f"{match_rate:.1f}%")
         
-        st.success("🎉 Pipeline completed successfully!")
+        st.success("Pipeline completed successfully!")
         
         # Display results
         if ranked_count > 0:
             st.markdown("---")
-            st.subheader("🎯 Top Matching Jobs")
+            st.subheader("Top Matching Jobs")
             
             # Create tabs for different views
-            tab1, tab2 = st.tabs(["📋 Table View", "📄 Detailed View"])
+            tab1, tab2 = st.tabs(["Table View", "Detailed View"])
             
             with tab1:
                 # Table view
@@ -177,13 +177,13 @@ if run_button:
                         
                         with col_b:
                             st.metric("Match Score", f"{job.get('match_score', 0):.2f}")
-                            st.link_button("🔗 View Job", job.get('link', '#'))
+                            st.link_button("View Job", job.get('link', '#'))
         
         else:
-            st.warning("⚠️ No jobs matched your criteria. Try adjusting the filters.")
+            st.warning("No jobs matched your criteria. Try adjusting the filters.")
     
     except Exception as e:
-        st.error(f"❌ Error: {str(e)}")
+        st.error(f"Error: {str(e)}")
         st.exception(e)
 
 else:
@@ -193,7 +193,7 @@ else:
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.subheader("🔍 Job Boards")
+        st.subheader("Job Boards")
         st.markdown("""
         Search LinkedIn, Indeed, and StepStone for jobs matching your criteria.
         - Automated scraping via Apify
@@ -202,7 +202,7 @@ else:
         """)
     
     with col2:
-        st.subheader("🏢 Company Careers")
+        st.subheader("Company Careers")
         st.markdown("""
         Visit specific company career pages directly.
         - Target companies you want to work for
@@ -215,7 +215,7 @@ else:
                 st.markdown(f"- **{company['name']}**: {company['url']}")
     
     with col3:
-        st.subheader("✨ Automation")
+        st.subheader("Automation")
         st.markdown("""
         Let the system do the heavy lifting.
         - AI-powered resume tailoring
@@ -227,7 +227,7 @@ else:
     
     # Recent runs (if data exists)
     if os.path.exists("data/ranked_jobs.json"):
-        st.subheader("📂 Last Run Results")
+        st.subheader("Last Run Results")
         
         try:
             with open("data/ranked_jobs.json", "r") as f:
@@ -245,4 +245,4 @@ else:
 
 # Footer
 st.markdown("---")
-st.caption("Made for Munich-based Junior PM & Data Analyst job search 🇩🇪")
+st.caption("Made for Munich-based Junior PM & Data Analyst job search")
