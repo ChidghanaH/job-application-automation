@@ -1,4 +1,4 @@
-name: Resume Generation Automation
+name: Automated Job Application Workflow
 
 on:
   schedule:
@@ -6,34 +6,50 @@ on:
   workflow_dispatch:  # Manual trigger
 
 jobs:
-  generate-resumes:
+  job-search-and-apply:
     runs-on: ubuntu-latest
     
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
-          
+      
       - name: Install dependencies
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-          
-      - name: Read job listings from Google Sheets and generate tailored resumes
+      
+      - name: Step 1 - Search LinkedIn for jobs
+        env:
+          APIFY_API_KEY: ${{ secrets.APIFY_API_TOKEN }}
+        run: python scripts/fetch_jobs.py
+      
+      - name: Step 2 - Search company career pages
+        run: python scripts/company_scraper.py
+      
+      - name: Step 3 - AI-powered job matching (80%+ threshold)
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/rank_jobs.py
+      
+      - name: Step 4 - Generate tailored resumes and cover letters
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python scripts/generate_docs.py
+      
+      - name: Step 5 - Update tracking sheet
+        env:
           GOOGLE_SHEETS_CREDENTIALS: ${{ secrets.GOOGLE_SHEETS_CREDENTIALS }}
           SHEET_ID: ${{ secrets.SHEET_ID }}
-        run: python scripts/process_applications.py
-          
-      - name: Upload generated resumes
+        run: python scripts/update_sheet.py
+      
+      - name: Upload generated application materials
         uses: actions/upload-artifact@v4
         with:
           name: tailored-resumes-${{ github.run_number }}
           path: output/resumes/
-          retention-days: 30
