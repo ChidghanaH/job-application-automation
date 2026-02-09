@@ -1,30 +1,29 @@
 # Job Application Automation Workflow
 
-This is an automated job search and application workflow I built to help with my job hunt in Munich. It's designed specifically for Junior PM and Data Analyst roles. The system fetches jobs from various sources, generates tailored resumes and cover letters using AI, and tracks everything in Google Sheets. It runs automatically every day via GitHub Actions.
+This is an automated job application workflow I built to help with my job hunt in Munich. It's designed specifically for Junior PM and Data Analyst roles. The system reads job listings from Google Sheets, generates tailored resumes and cover letters using AI, and tracks everything automatically. It runs every day via GitHub Actions.
 
 ## What It Does
 
-- **Automated Job Scraping**: Searches LinkedIn, Indeed, and StepStone for relevant IT jobs in Munich using Apify
-- **Smart Filtering**: Ranks each job based on how well it matches my skills, preferred location, and role type
-- **AI Resume Tailoring**: Uses OpenAI GPT-4 to customize my resume and cover letter for each specific job
-- **Application Tracking**: Automatically logs job details, match scores, and application links in Google Sheets
+- **Job Management**: Reads job listings from Google Sheets where you can manually add positions you're interested in
+- **AI Resume Tailoring**: Uses OpenAI GPT-4 to customize resumes and cover letters for each specific job
+- **Application Tracking**: Automatically logs job details and status in Google Sheets
 - **Daily Automation**: Runs automatically every morning at 7 AM CET
 - **Resume Storage**: Saves all generated resumes as downloadable artifacts
 
 ## How It Works
 
-The workflow follows this process:
+The workflow follows this simple process:
 
 ```
 GitHub Actions (runs daily at 7 AM)
   ↓
-fetch_jobs.py → Scrapes jobs from LinkedIn and Indeed via Apify
+process_applications.py → Reads jobs from Google Sheets
   ↓
-rank_jobs.py → Filters by location, keywords, and calculates match score
+  → Uses OpenAI GPT-4 to tailor CV and cover letter for each job
   ↓
-generate_docs.py → Uses OpenAI GPT-4 to tailor my CV and cover letter
+  → Saves documents to output/resumes/ folder
   ↓
-update_sheet.py → Updates Google Sheets with tracking info
+  → Updates Google Sheets with processing status
   ↓
 Artifacts → Downloads the tailored resumes
 ```
@@ -43,7 +42,6 @@ cd job-application-automation
 Create a `.env` file for local testing:
 
 ```bash
-APIFY_API_KEY=your_apify_key
 OPENAI_API_KEY=your_openai_key
 GOOGLE_SHEETS_CREDENTIALS='{...}' # Your service account JSON
 SHEET_ID=your_google_sheet_id
@@ -53,128 +51,84 @@ SHEET_ID=your_google_sheet_id
 
 Go to your repository's **Settings → Secrets → Actions** and add these secrets:
 
-- `APIFY_API_KEY`
 - `OPENAI_API_KEY`
 - `GOOGLE_SHEETS_CREDENTIALS`
 - `SHEET_ID`
 
-### 4. Customize Job Criteria
+### 4. Set Up Your Google Sheet
 
-Edit `config.py` to match your preferences:
+Create a Google Sheet with a worksheet named "Jobs" containing these columns:
 
-```python
-JOB_CRITERIA = {
-    "locations": ["Munich", "München", "Bavaria"],
-    "job_titles": ["Junior IT Project Manager", "Data Analyst"],
-    "keywords": ["python", "sql", "agile", "scrum"],
-    "min_match_score": 0.75
-}
-```
+- Title: Job title
+- Company: Company name
+- Location: Job location
+- Description: Job description
+- Status: Set to "New" for jobs to process
+- URL: Application link (optional)
 
-## Implementation Details
+### 5. Get API Keys
 
-The project uses several Python scripts in the `scripts/` folder:
+**OpenAI API**: Sign up at https://platform.openai.com and create an API key
 
-### scripts/fetch_jobs.py
+**Google Sheets**: 
+1. Go to Google Cloud Console
+2. Create a new project
+3. Enable Google Sheets API
+4. Create a service account and download JSON credentials
+5. Share your Google Sheet with the service account email
 
-This script connects to Apify's LinkedIn and Indeed scrapers, searches for jobs matching my criteria in Munich, and saves the raw results to `data/raw_jobs.json`.
-
-### scripts/rank_jobs.py
-
-Loads the raw jobs, calculates a match score for each one based on keywords and requirements, filters out anything below my minimum threshold, and saves the top candidates to `data/ranked_jobs.json`.
-
-### scripts/generate_docs.py
-
-Takes the ranked jobs and uses OpenAI's GPT-4 API to generate customized versions of my resume and cover letter for each position. The prompts include both my base resume template and the specific job description. Results are saved as PDFs in `output/resumes/`.
-
-### scripts/update_sheet.py
-
-Connects to Google Sheets using the gspread library and adds new rows for each job with details like date, company, role, location, match score, link, and application status.
-
-## Running the System
-
-### Manual Execution
-
-You can run it manually on your local machine:
+### 6. Run Locally (Optional)
 
 ```bash
 pip install -r requirements.txt
-python scripts/fetch_jobs.py
-python scripts/rank_jobs.py
-python scripts/generate_docs.py
-python scripts/update_sheet.py
+python scripts/process_applications.py
 ```
 
-### Automatic Daily Runs
+### 7. Let GitHub Actions Do Its Thing
 
-The GitHub Actions workflow automatically runs every day at 7 AM CET. You can also trigger it manually:
+Once you've set up your secrets, the workflow will run automatically every day at 7 AM CET. You can also trigger it manually from the Actions tab.
 
-1. Go to the **Actions** tab in your repository
-2. Select **Job Search Automation**
-3. Click **Run workflow**
-4. Download generated resumes from the **Artifacts** section
+## Project Structure
 
-## Setting Up Google Sheets
-
-1. Create a new Google Sheet with these columns:
-   - Date | Company | Role | Location | Match Score | Link | Status | Notes
-2. Share the sheet with your service account email (found in your credentials JSON)
-3. Copy the Sheet ID from the URL and add it to your GitHub secrets
-
-## Important Considerations
-
-### Legal and Ethical Usage
-
-Please note that this tool is designed to assist with job searching, not to spam applications:
-
-- Never use it to automatically click "Apply" buttons - that violates LinkedIn and Indeed terms of service
-- This system finds opportunities and prepares materials - you still need to manually review and apply
-- Always review the tailored resumes before submitting to ensure quality
-- Be respectful of rate limits on job boards
-
-### Cost Considerations
-
-Running this system does have some costs:
-
-- Apify: Approximately $5 per month for scraping 50 jobs daily
-- OpenAI GPT-4: Around $10 per month for resume generation
-- GitHub Actions: Free within GitHub's standard limits
-
-## Customization Options
-
-### Changing the Schedule
-
-Edit `.github/workflows/job-automation.yml` to adjust when it runs:
-
-```yaml
-schedule:
-  - cron: '0 7 * * *'  # Adjust this time (uses UTC)
+```
+.
+├── .github/workflows/
+│   └── job-automation.yml    # GitHub Actions workflow
+├── scripts/
+│   └── process_applications.py  # Main automation script
+├── output/
+│   └── resumes/              # Generated resumes and cover letters
+├── requirements.txt          # Python dependencies
+└── README.md
 ```
 
-### Adding More Job Boards
+## Tech Stack
 
-You can extend `fetch_jobs.py` to include other sources like StepStone or XING, or integrate with n8n webhooks.
+- **Python**: Core automation logic
+- **OpenAI GPT-4**: AI-powered resume and cover letter generation
+- **Google Sheets API**: Job tracking and status updates
+- **GitHub Actions**: Daily automation and scheduling
 
-## Helpful Resources
+## Customization
 
-- [Apify Job Scraping Actors](https://apify.com/store)
-- [OpenAI API Documentation](https://platform.openai.com/docs)
-- [gspread Python Library](https://docs.gspread.org/)
-- [GitHub Actions Secrets Guide](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+You can customize the automation by editing `process_applications.py`:
 
-## Contributing
+- Update the `user_profile` variable with your own background and experience
+- Modify the OpenAI prompts to match your writing style
+- Adjust the temperature and max_tokens parameters for different creativity levels
+- Change the schedule in `.github/workflows/job-automation.yml`
 
-If you find this useful and want to contribute, pull requests are welcome! Areas that could use improvement:
+## Why I Built This
 
-- Support for additional job boards
-- Better scoring algorithms
-- Cover letter template variations
-- n8n workflow examples
+Job hunting can be exhausting, especially when you're applying to dozens of positions. I wanted a system that would help me:
+
+- Stay organized with all my applications in one place
+- Generate tailored application materials for each job
+- Save time on repetitive tasks
+- Never miss following up on interesting opportunities
+
+This automation handles the tedious parts so I can focus on networking and preparing for interviews.
 
 ## License
 
-MIT License - Feel free to use this for your own job search. If it helps you land a job, I'd love to hear about it!
-
----
-
-Built by someone who got tired of manually searching job boards every day. I hope it helps you too!
+This project is open source and available under the MIT License.
