@@ -26,8 +26,9 @@ JOB_CRITERIA = {
         'Excel',
         'market research'
     ],
-    'location': 'Munich, Germany',
-    'experience_level': ['entry', 'junior', '0-2 years']
+    'locations': ['Munich, Germany', 'München, Germany'],
+    'experience_level': ['entry', 'junior', '0-2 years'],
+    'max_jobs_per_run': 50
 }
 
 # Company career pages to scrape
