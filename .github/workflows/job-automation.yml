@@ -53,3 +53,4 @@ jobs:
         with:
           name: tailored-resumes-${{ github.run_number }}
           path: output/resumes/
+                  if-no-files-found: ignore
